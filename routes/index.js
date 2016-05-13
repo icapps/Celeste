@@ -1,6 +1,7 @@
 var keystone = require('keystone');
 var middleware = require('./middleware');
 var importRoutes = keystone.importer(__dirname);
+var sync = require('../updates/sync.js');
 
 // Common Middleware
 keystone.pre('routes', middleware.initLocals);
@@ -15,4 +16,8 @@ var routes = {
 exports = module.exports = function (app) {
 	// Views
 	app.get('/', routes.views.index);
-	};
+	
+	//sync
+	app.get('/api/sync', sync.syncUsersToDb);
+
+};
