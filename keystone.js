@@ -29,8 +29,7 @@ keystone.init({
 	'session': true,
 	'auth': true,
 	'user model': 'User',
-	'port':3010
-
+	'port': 3010
 });
 
 keystone.import('models');
@@ -44,14 +43,12 @@ keystone.set('locals', {
 
 keystone.set('routes', require('./routes'));
 
-
-
 keystone.Email.defaults.templateExt = 'hbs';
 keystone.Email.defaults.templateEngine = require('handlebars');
 
 
 keystone.set('nav', {
-	users: 'users',
+	users: 'users'
 });
 
 keystone.start();
