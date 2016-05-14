@@ -20,6 +20,7 @@ User.add({
 	status:{type:String, initial:false, required: false, noedit:true},
 	color:{type:String, initial:false, required: false, noedit:true},
 	real_name:{type:String, initial:false, required: false, noedit:true},
+	google_access_token:{type:String, initial:false, required: false, noedit:true},
 	profile:{
 		first_name: {type:String, initial:false, required: false, noedit:true},
 		last_name: {type:String, initial:false, required: false, noedit:true},
