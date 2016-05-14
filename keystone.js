@@ -29,7 +29,7 @@ keystone.init({
 	'session': true,
 	'auth': true,
 	'user model': 'User',
-	'port': 3010,
+	'port': process.env.PORT,
 	'mongo': process.env.MONGODB_URI || 'mongodb://localhost/celeste'
 });
 
