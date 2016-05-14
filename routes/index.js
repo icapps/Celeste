@@ -43,9 +43,6 @@ exports = module.exports = function (app) {
 	//sync
 	app.get('/api/sync', sync.syncUsersToDb);
 
-	var clientID = process.env.GOOGLE_CONSUMER_KEY,
-		clientSecret = process.env.GOOGLE_CONSUMER_KEY;
-
     passport.use(new GoogleStrategy({
             clientID: '644028977678-a8a351epmpq4nunb7jr1ege5slp2keq1.apps.googleusercontent.com',
             clientSecret: 'kJYjCTQMHxeDo6giQFuUHVko',
@@ -86,7 +83,6 @@ exports = module.exports = function (app) {
 
     app.get('/auth/callback', function(req, res, next) {
         passport.authenticate('google', function(err, userId, info) {
-            console.log(typeof clientID, clientID.toString());
 
             if (err) {
                 res.redirect(authVerifyUrl + _generateError(err.code ? 'oauth2_error' : info && info.errorType));
