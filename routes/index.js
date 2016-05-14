@@ -20,7 +20,9 @@ exports = module.exports = function (app) {
 	
 	//api
 	app.get('/api/users',routes.api.users.getAll);
-	
+	app.get('/api/rooms',routes.api.rooms.getAll);
+
+
 	//sync
 	app.get('/api/sync', sync.syncUsersToDb);
 
