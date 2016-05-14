@@ -15,8 +15,6 @@ var sync = require('../updates/sync.js');
 
 // Common Middleware
 keystone.pre('routes', middleware.enableCors);
-keystone.pre('routes', middleware.initLocals);
-keystone.pre('render', middleware.flashMessages);
 
 //
 var runPort = keystone.get('port');
