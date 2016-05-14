@@ -12,7 +12,6 @@ module.exports.getUserComments = function (req, res) {
 	};
 	rp(options)
 		.then(function (result) {
-			console.log(JSON.stringify(result));
 			if (result && result.hasOwnProperty('messages') && result.messages.length) {
 				var promises = [];
 				result.messages.forEach(function (message, i) {
