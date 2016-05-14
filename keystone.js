@@ -12,7 +12,7 @@ keystone.init({
 	'brand': 'Celeste',
 
 	'sass': 'public',
-'static': 'public',
+	'static': 'public',
 	'favicon': 'public/favicon.ico',
 	'views': 'templates/views',
 	'view engine': 'hbs',
@@ -30,7 +30,6 @@ keystone.init({
 	'auth': true,
 	'user model': 'User',
 	'port': 3010
-
 });
 
 keystone.import('models');
@@ -44,14 +43,12 @@ keystone.set('locals', {
 
 keystone.set('routes', require('./routes'));
 
-
-
 keystone.Email.defaults.templateExt = 'hbs';
 keystone.Email.defaults.templateEngine = require('handlebars');
 
 
 keystone.set('nav', {
-	users: 'users',
+	users: 'users'
 });
 
 keystone.start();

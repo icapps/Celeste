@@ -9,8 +9,8 @@ var User = new keystone.List('User');
 
 User.add({
 	//Standard keystone props
-	name: {type: Types.Name, required: false, index: true},
-	email: {type: Types.Email, initial: true, required: false, index: true},
+	name: {type: String, required: false, index: true},
+	email: {type: Types.Email, initial: true, required: false, index: true,unique:true},
 	password: {type: Types.Password, initial: true, required: false},
 
 	//Slack props

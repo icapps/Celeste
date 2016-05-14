@@ -11,7 +11,7 @@ var jwt = require('../services/jwt');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var passport = require('passport');
 var _ = require('lodash');
-
+var sync = require('../updates/sync.js');
 
 // Common Middleware
 keystone.pre('routes', middleware.initLocals);
@@ -22,13 +22,26 @@ var runPort = keystone.get('port');
 
 // Import Route Controllers
 var routes = {
-    views: importRoutes('./views')
+	views: importRoutes('./views'),
+	api: importRoutes('./api')
 };
 
 // Setup Route Bindings
 exports = module.exports = function (app) {
-    // Views
-    app.get('/', routes.views.index);
+	// Views
+	app.get('/', routes.views.index);
+
+	//api get
+	app.get('/api/users',routes.api.users.getAll);
+	app.get('/api/rooms',routes.api.rooms.getAll);
+	app.get('/api/channels',routes.api.channels.getAll);
+
+
+	//api post
+	app.post('/api/events',routes.api.events.postEvent);
+
+	//sync
+	app.get('/api/sync', sync.syncUsersToDb);
 
     passport.use(new GoogleStrategy({
             clientID: '644028977678-a8a351epmpq4nunb7jr1ege5slp2keq1.apps.googleusercontent.com',//process.env.GOOGLE_CONSUMER_KEY,
@@ -50,6 +63,7 @@ exports = module.exports = function (app) {
                 };
 
             console.log('try to find user with email', email);
+
             User.model.findOneAndUpdate({email: email}, toUpdate, function (err, user) {
                 if (err) {
                     return done(null, false, {errorType: 'unknown'});
@@ -72,6 +86,7 @@ exports = module.exports = function (app) {
 
             if (err) {
                 res.redirect(authVerifyUrl + '?error=' + info.errorType);
+				return;
             }
 
             res.redirect(authVerifyUrl + '?token=' + jwt.createJWTToken(userId));
@@ -79,5 +94,3 @@ exports = module.exports = function (app) {
     });
 
 };
-
-
