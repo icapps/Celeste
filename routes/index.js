@@ -17,16 +17,17 @@ var routes = {
 exports = module.exports = function (app) {
 	// Views
 	app.get('/', routes.views.index);
-	
+
 	//api get
-	app.get('/api/users',routes.api.users.getAll);
-	app.get('/api/rooms',routes.api.rooms.getAll);
-	app.get('/api/channels',routes.api.channels.getAll);
+	app.get('/api/users', routes.api.users.getAll);
+	app.get('/api/rooms', routes.api.rooms.getAll);
+	app.get('/api/comments', routes.api.comments.getUserComments);
+	app.get('/api/channels', routes.api.channels.getAll);
 
 
 	//api post
-	app.post('/api/events',routes.api.events.postEvent);
-	
+	app.post('/api/events', routes.api.events.postEvent);
+
 	//sync
 	app.get('/api/sync', sync.syncUsersToDb);
 
