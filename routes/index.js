@@ -4,6 +4,7 @@ var importRoutes = keystone.importer(__dirname);
 var sync = require('../updates/sync.js');
 
 // Common Middleware
+keystone.pre('routes', middleware.enableCors);
 keystone.pre('routes', middleware.initLocals);
 keystone.pre('render', middleware.flashMessages);
 
