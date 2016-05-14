@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var Room = keystone.list('Room');
 var Event = keystone.list('Event');
-var _ = require('underscore');
+var _ = require('lodash');
 var moment = require('moment');
 var apiResponse = require('../../services/apiResponseService');
 

@@ -29,14 +29,14 @@ keystone.init({
 	'session': true,
 	'auth': true,
 	'user model': 'User',
-	'port':3010
-
+	'port': process.env.PORT,
+	'mongo': process.env.MONGODB_URI || 'mongodb://localhost/celeste'
 });
 
 keystone.import('models');
 
 keystone.set('locals', {
-	_: require('underscore'),
+	_: require('lodash'),
 	env: keystone.get('env'),
 	utils: keystone.utils,
 	editable: keystone.content.editable,
@@ -44,14 +44,12 @@ keystone.set('locals', {
 
 keystone.set('routes', require('./routes'));
 
-
-
 keystone.Email.defaults.templateExt = 'hbs';
 keystone.Email.defaults.templateEngine = require('handlebars');
 
 
 keystone.set('nav', {
-	users: 'users',
+	users: 'users'
 });
 
 keystone.start();

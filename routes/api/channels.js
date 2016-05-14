@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var User = keystone.list('User');
 var rp = require('request-promise');
-var _ = require('underscore');
+var _ = require('lodash');
 var apiResponse = require('../../services/apiResponseService');
 var dotenv = require('dotenv').config();
 
