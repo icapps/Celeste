@@ -12,7 +12,8 @@ module.exports.getUserComments = function (req, res) {
 	};
 	rp(options)
 		.then(function (result) {
-			if (result && result.length) {
+			console.log(JSON.stringify(result));
+			if (result && result.hasOwnProperty('messages') && result.messages.length) {
 				var promises = [];
 				result.messages.forEach(function (message, i) {
 					var options = {
@@ -36,6 +37,8 @@ module.exports.getUserComments = function (req, res) {
 					});
 					res.send(results);
 				})
+			} else {
+				res.status(500).send('failed');
 			}
 		});
 
