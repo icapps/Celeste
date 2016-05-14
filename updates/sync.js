@@ -2,6 +2,7 @@ var _ = require('underscore'),
 	rp = require('request-promise');
 	keystone = require('keystone');
 	User = keystone.list('User');
+	dotenv = require('dotenv').config();
 
 module.exports = {
 
@@ -10,7 +11,7 @@ module.exports = {
 		var options = {
 			uri: 'https://slack.com/api/users.list?',
 			qs: {
-				token: 'xoxp-2186825377-14603377189-42848621732-2e85220052'
+				token: process.env.SLACK_TOKEN
 			},
 			json: true
 		};
@@ -34,7 +35,7 @@ function _getInfoFromSlack(options) {
 
 	rp(options)
 		.then(function (res) {
-			_.each(res.members, function (member) {
+			_.forEach(res.members, function (member) {
 				
 				userArray.push(new Promise(function(resolve,reject){
 					//Define the userObject
@@ -58,8 +59,7 @@ function _getInfoFromSlack(options) {
 					};
 					
 					var newUser = User.model(userToSave);
-					//TODO make email configurable
-					if(newUser.email && newUser.email.indexOf('@icapps.com')>-1){
+					if(newUser.email && newUser.email.indexOf(process.env.EMAIL_DOMAIN)>-1){
 						newUser.save(function(err){
 							if(err)console.log('error in saving user',err);
 							resolve();
