@@ -43,9 +43,12 @@ exports = module.exports = function (app) {
 	//sync
 	app.get('/api/sync', sync.syncUsersToDb);
 
+	var clientID = process.env.GOOGLE_CONSUMER_KEY,
+		clientSecret = process.env.GOOGLE_CONSUMER_KEY;
+	
     passport.use(new GoogleStrategy({
-            clientID: '644028977678-a8a351epmpq4nunb7jr1ege5slp2keq1.apps.googleusercontent.com',//process.env.GOOGLE_CONSUMER_KEY,
-            clientSecret: 'kJYjCTQMHxeDo6giQFuUHVko', //process.env.GOOGLE_CONSUMER_KEY,
+            clientID: clientID.toString(),
+            clientSecret: clientSecret.toString(),
             callbackURL: process.env.BASE_URL + ':' + runPort + '/auth/callback',
             scope: ['openid', 'email', 'https://www.googleapis.com/auth/calendar']
         },
