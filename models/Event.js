@@ -4,10 +4,14 @@ var Types = keystone.Field.Types;
 var Event = new keystone.List('Event');
 
 Event.add({
-		name: {type: String, required: true, initial: true, index: true, unique: true},
+		name: {type: String, required: true, initial: true, index: true},
 		startDate: {type: Types.Datetime, required: true,initial:true, index: true},
 		endDate: {type: Types.Datetime, required: true,initial:true, index: true},
-		meetingRoomId:{type:Types.Relationship, ref: 'Room'}
+		meetingRoomId:{type:Types.Relationship, ref: 'Room'},
+		content: {type: String, index: true},
+		context: {type: String, index: true},
+		organizerId: {type: Types.Relationship, ref: 'User', index: true}
+
 	},
 	'attendees',
 	{

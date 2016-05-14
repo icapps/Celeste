@@ -18,11 +18,13 @@ exports = module.exports = function (app) {
 	// Views
 	app.get('/', routes.views.index);
 	
-	//api
+	//api get
 	app.get('/api/users',routes.api.users.getAll);
 	app.get('/api/rooms',routes.api.rooms.getAll);
-
-
+	
+	//api post
+	app.post('/api/events',routes.api.events.postEvent);
+	
 	//sync
 	app.get('/api/sync', sync.syncUsersToDb);
 
