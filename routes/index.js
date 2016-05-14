@@ -45,10 +45,10 @@ exports = module.exports = function (app) {
 
 	var clientID = process.env.GOOGLE_CONSUMER_KEY,
 		clientSecret = process.env.GOOGLE_CONSUMER_KEY;
-	
+
     passport.use(new GoogleStrategy({
-            clientID: clientID.toString(),
-            clientSecret: clientSecret.toString(),
+            clientID: '644028977678-a8a351epmpq4nunb7jr1ege5slp2keq1.apps.googleusercontent.com',
+            clientSecret: 'kJYjCTQMHxeDo6giQFuUHVko',
             callbackURL: process.env.BASE_URL + ':' + runPort + '/auth/callback',
             scope: ['openid', 'email', 'https://www.googleapis.com/auth/calendar']
         },
@@ -86,14 +86,19 @@ exports = module.exports = function (app) {
 
     app.get('/auth/callback', function(req, res, next) {
         passport.authenticate('google', function(err, userId, info) {
+            console.log(typeof clientID, clientID.toString());
 
             if (err) {
-                res.redirect(authVerifyUrl + '?error=' + info.errorType);
+                res.redirect(authVerifyUrl + _generateError(err.code ? 'oauth2_error' : info && info.errorType));
 				return;
             }
 
             res.redirect(authVerifyUrl + '?token=' + jwt.createJWTToken(userId));
         })(req, res, next);
     });
+
+    function _generateError(type) {
+        return type ? '?error=' + type : '';
+    }
 
 };

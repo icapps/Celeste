@@ -16,7 +16,7 @@
     "passport": "^0.3.2",
     "passport-google": "^0.3.0",
     "moment": "^2.13.0",
-    "request-promise": "^3.0.0",
+    "request-promise": "^3.0.0"
   },
   "devDependencies": {
     "gulp": "^3.7.0",
