@@ -14,8 +14,15 @@ module.exports = {
 			},
 			json: true
 		};
+		
+		var admin = { 'name.first': 'Admin', 'name.last': 'User', 'email': 'development@icapps.com', 'password': 'admin', 'isAdmin': true };
+		
+		
+		_removeTable('User').then(function(){
+			_createAdmin(admin);
+			_getInfoFromSlack(options);
+		});
 
-		_getInfoFromSlack(options);
 	}
 
 
@@ -51,15 +58,25 @@ function _getInfoFromSlack(options) {
 					};
 					
 					var newUser = User.model(userToSave);
-					newUser.save().then(function(){
-						resolve()
-					});
+					//TODO make email configurable
+					if(newUser.email && newUser.email.indexOf('@icapps.com')>-1){
+						newUser.save(function(err){
+							if(err)console.log('error in saving user',err);
+							resolve();
+						});
+					}else {
+						resolve();
+					}
+					
+					
 				}))
 				
 			});
 			
 			Promise.all(userArray).then(function(res){
 				console.log('all users posted to db');
+			},function(err){
+				console.log('err',err);
 			})
 			
 			
@@ -68,5 +85,26 @@ function _getInfoFromSlack(options) {
 			console.log(err);
 		});
 
+}
+
+function _removeTable(list) {
+	return new Promise(function (resolve, reject) {
+		var tableToRemove = keystone.list(list);
+		tableToRemove.model.remove({}, function (err) {
+			if (err) {
+				console.log(err);
+				console.log('failed to remove');
+				reject();
+			} else {
+				console.log('collection removed');
+				resolve();
+			}
+		});
+	});
+}
+
+function _createAdmin(user){
+	var newUser = User.model(user);
+	newUser.save();
 }
 

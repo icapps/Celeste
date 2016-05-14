@@ -12,7 +12,7 @@ keystone.init({
 	'brand': 'Celeste',
 
 	'sass': 'public',
-'static': 'public',
+	'static': 'public',
 	'favicon': 'public/favicon.ico',
 	'views': 'templates/views',
 	'view engine': 'hbs',
@@ -29,6 +29,7 @@ keystone.init({
 	'session': true,
 	'auth': true,
 	'user model': 'User',
+	'port':3010
 
 });
 
