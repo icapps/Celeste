@@ -2,12 +2,15 @@ var keystone = require('keystone');
 var User = keystone.list('User');
 var rp = require('request-promise');
 var _ = require('underscore');
+var apiResponse = require('../../services/apiResponseService');
+var dotenv = require('dotenv').config();
+
 
 exports.getAll = function (req, res) {
 	var options = {
 		uri: 'https://slack.com/api/channels.list?',
 		qs: {
-			token: 'xoxp-2186825377-14603377189-42848621732-2e85220052'
+			token: process.env.SLACK_TOKEN
 		},
 		json: true
 	};
@@ -16,27 +19,27 @@ exports.getAll = function (req, res) {
 		.then(function (result) {
 			var channels = [];
 			var channelPromises = [];
-			_.each(result.channels, function (channel) {
+			_.forEach(result.channels, function (channel) {
 				channelPromises.push(new Promise(function (parentResolve, parentReject) {
 
 					var channelObject = channel;
 
 					var memberPromiseArray = [];
 					var memberArray = [];
-					_.each(channel.members, function (member) {
+					_.forEach(channel.members, function (member) {
 
 						memberPromiseArray.push(new Promise(function (resolve, reject) {
-							User.model.find({slack_id: member}).exec(function (err, user) {
-								
-								if(user[0]){
-									var userToSend = {
-										id:user[0].id,
-										real_name:user[0].real_name,
-										title: user[0].profile.title
-									};
+							User.model.findOne({slack_id: member}).exec(function (err, user) {
+									if(user) {
+										var userToSend = {
+											id: user.id,
+											real_name: user.real_name,
+											title: user.profile.title
+										};
 
-									memberArray.push(userToSend);
-								}
+										memberArray.push(userToSend);
+									}
+								
 								
 								resolve();
 							})
@@ -55,7 +58,7 @@ exports.getAll = function (req, res) {
 			});
 
 			Promise.all(channelPromises).then(function () {
-				res.json(channels);
+				apiResponse.sendResponse(req,res,null,null,channels);
 			})
 		});
 };

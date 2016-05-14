@@ -4,7 +4,7 @@ var Types = keystone.Field.Types;
 var Room = new keystone.List('Room');
 
 Room.add({
-	name: {type: String, required: true,initial:true, index: true,unique:true}
+	name: {type: String, required: true,initial:true, index: true}
 
 });
 
