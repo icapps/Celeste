@@ -36,7 +36,7 @@ keystone.init({
 keystone.import('models');
 
 keystone.set('locals', {
-	_: require('underscore'),
+	_: require('lodash'),
 	env: keystone.get('env'),
 	utils: keystone.utils,
 	editable: keystone.content.editable,
