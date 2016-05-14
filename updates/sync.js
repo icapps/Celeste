@@ -75,6 +75,7 @@ function _getInfoFromSlack(options) {
 			
 			Promise.all(userArray).then(function(res){
 				console.log('all users posted to db');
+				res.json({ok:'all users synced'})
 			},function(err){
 				console.log('err',err);
 			})
