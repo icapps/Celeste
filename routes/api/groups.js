@@ -151,22 +151,16 @@ function _daysFromNow(datetime, nextMeetingDate) {
 //You have an array of availibilities, now determine the possibilities
 //An intersection gets checked every 30 mins.
 function _determineAvailibilityAll(availibilities) {
-	
+
 	console.log(availibilities);
 	var intersections = [];
 
-	for(var i = 0;i<availibilities.length;i++){
-		for (var j=0;i<availibilities[i].length;j++){
-			var startIntersection = availibilities[i][j].startTime.getTime()/1000;
-			
-			console.log(startIntersection)
-			
-			
-		}
+	for (var i = 0; i < availibilities[0].length; i++) {
+		var startIntersection = availibilities[0][i].startTime.getTime() / 1000;
+		
 	}
-	
-	
-	
+
+
 	//for (var i = 1; i < availibilities.length; i++) {
 	//	if ((i + 1) <= availibilities.length) {
 	//		intersections[i] = lodash.intersectionWith(startIntersection, availibilities[i], function(x, y) {
