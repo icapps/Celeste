@@ -11,7 +11,7 @@ exports.getAll = function (req, res) {
 exports.getDetails =function(req,res){
 	if(req.query.userId){
 		var userId = req.query.userId;
-		User.model.find({_id:userId}).exec(function (err, user) {
+		User.model.findOne({_id:userId}).exec(function (err, user) {
 			apiResponse.sendResponse(req,res,err,'error in user details',user);
 		});	
 	}
