@@ -35,8 +35,10 @@ exports.getAll = function (req, res) {
 										var userToSend = {
 											id: user.id,
 											real_name: user.real_name,
-											title: user.profile.title,
-											image: user.profile.image
+											profile:{
+												image: user.profile.image,
+												title: user.profile.title
+											}
 										};
 										
 										memberArray.push(userToSend);
