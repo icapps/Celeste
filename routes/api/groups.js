@@ -13,7 +13,7 @@ var defaultMeetingsInterval = 0.5;
 exports.getAvailabilities = function (req, res) {
 
 	var users = req.body.users;
-	var duration = req.body.duration;
+	var duration = req.body.duration/60;
 	var rangeStart = moment().format();
 	if (req.body.start)rangeStart = moment(req.body.start).format();
 	var rangeEnd = moment().add(14, 'days').format();
