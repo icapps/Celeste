@@ -33,7 +33,7 @@ exports.getAll = function (req, res) {
 							User.model.findOne({slack_id: member}).exec(function (err, user) {
 									if(user) {
 										var userToSend = {
-											id: user.id,
+											_id: user.id,
 											real_name: user.real_name,
 											profile:{
 												image: user.profile.image,

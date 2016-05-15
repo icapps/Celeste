@@ -1,6 +1,7 @@
 var keystone = require('keystone');
 var User = keystone.list('User');
 var apiResponse = require('../../services/apiResponseService');
+var _ = require('underscore');
 
 exports.getAll = function (req, res) {
 	User.model.find().where('slack_id').ne(null).exec(function (err, users) {

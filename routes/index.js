@@ -29,7 +29,7 @@ var routes = {
 exports = module.exports = function (app) {
 	// Views
 	app.get('/', routes.views.index);
-
+	
 	//api get
 	app.get('/api/users', routes.api.users.getAll);
 	app.get('/api/userDetails', routes.api.users.getDetails);
@@ -39,7 +39,8 @@ exports = module.exports = function (app) {
 
 
 	//api post
-	app.post('/api/events', routes.api.events.postEvent);
+	app.post('/api/events',routes.api.events.postEvent);
+	app.post('/api/groups',routes.api.groups.getAvailabilities);
 
 	//sync
 	app.get('/api/sync', sync.syncUsersToDb);
