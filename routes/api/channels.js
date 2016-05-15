@@ -52,8 +52,8 @@ exports.getAll = function (req, res) {
 					});
 
 					Promise.all(memberPromiseArray).then(function () {
-						
-						if(memberArray.length>0){
+						//We only need channels with more than one member
+						if(memberArray.length>1){
 							channelObject.members = memberArray;
 							channels.push(channelObject);
 						}
