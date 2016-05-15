@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var User = keystone.list('User');
 var rp = require('request-promise');
-var _ = require('underscore');
+var _ = require('lodash');
 var apiResponse = require('../../services/apiResponseService');
 var dotenv = require('dotenv').config();
 
@@ -17,6 +17,7 @@ exports.getAll = function (req, res) {
 
 	rp(options)
 		.then(function (result) {
+			
 			var channels = [];
 			var channelPromises = [];
 			_.forEach(result.channels, function (channel) {
@@ -34,9 +35,12 @@ exports.getAll = function (req, res) {
 										var userToSend = {
 											id: user.id,
 											real_name: user.real_name,
-											title: user.profile.title
+											profile:{
+												image: user.profile.image,
+												title: user.profile.title
+											}
 										};
-
+										
 										memberArray.push(userToSend);
 									}
 								
@@ -48,8 +52,11 @@ exports.getAll = function (req, res) {
 					});
 
 					Promise.all(memberPromiseArray).then(function () {
-						channelObject.members = memberArray;
-						channels.push(channelObject);
+						//We only need channels with more than one member
+						if(memberArray.length>1){
+							channelObject.members = memberArray;
+							channels.push(channelObject);
+						}
 						parentResolve();
 					})
 				}));

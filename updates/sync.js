@@ -1,4 +1,4 @@
-var _ = require('underscore'),
+var _ = require('lodash'),
 	rp = require('request-promise');
 	keystone = require('keystone');
 	User = keystone.list('User');

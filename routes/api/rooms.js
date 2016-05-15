@@ -1,7 +1,7 @@
 var keystone = require('keystone');
 var Room = keystone.list('Room');
 var Event = keystone.list('Event');
-var _ = require('underscore');
+var _ = require('lodash');
 var moment = require('moment');
 var apiResponse = require('../../services/apiResponseService');
 
@@ -10,9 +10,12 @@ exports.getAll = function (req, res) {
 	//example:
 	//api/rooms?events=true&start=somedate&end=somedate
 	//Gets all rooms with the events during that timeperiod
+	var rangeStart = moment(new Date().setHours(9,0,0,0)).format();
+	var rangeEnd = moment(new Date().setHours(17,0,0,0)).format();
 	
-	var rangeStart = moment(req.query.start).format();
-	var rangeEnd = moment(req.query.end).format();
+	
+	if(req.query.start) rangeStart = moment(req.query.start).format();
+	if(req.query.end) rangeEnd = moment(req.query.end).format();
 	var includeEvents = !!req.query.events;
 	
 	Room.model.find().exec(function (err, rooms) {
