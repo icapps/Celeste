@@ -43,15 +43,10 @@ exports.getAvailabilities = function (req, res) {
 	});
 
 	Promise.all(availabilitiesArray).then(function (availabilities) {
-		//var trueAvailabilities = [];
-        //
-		//_.forEach(availabilities, function (available) {
-		//	trueAvailabilities.push(_.filter(available, function (o) {
-		//		return o.suitable !== false;
-		//	}))
-		//});
+		
+		var intersections = lodash.intersection.apply(null,availabilities);
 
-		apiResponse.sendResponse(req,res,null,'error in availabilities',availabilities);
+		apiResponse.sendResponse(req,res,null,'error in availabilities',intersections);
 
 		_determineAvailibilityAll(availabilities);
 
@@ -77,7 +72,7 @@ function _calculateAvailibilities(events, duration) {
 	for (var i = 0; i < events.length; i++) {
 		var startDate = null;
 		if (i !== events.length - 1) startDate = events[i + 1].startDate;
-		availibilityArray.push(_calculateGap(events[i].endDate, startDate, duration));
+		availibilityArray= lodash.concat(availibilityArray,_calculateGap(events[i].endDate, startDate, duration).startTimes);
 	}
 
 	return availibilityArray;
@@ -97,20 +92,21 @@ function _calculateGap(a, b, duration) {
 			availibility.startTimes = _getPossibleStartTimes(a, timeBetween, duration);
 		} else {
 			var hoursTillDayEnds = _getHoursTillEndOfDay(a);
-			availibility.startTimes.push(_getPossibleStartTimes(a,hoursTillDayEnds*3600000,duration));
+			availibility.startTimes = lodash.concat(availibility.startTimes,_getPossibleStartTimes(a,hoursTillDayEnds*3600000,duration));
 			var nextDays = _daysFromNow(a, b);
+			var momentDate = moment(a);
 			while(nextDays>0){
-				var momentDate = moment(a);
-				var startDateTemp =momentDate.add(1, 'days');//.setHours(9, 0, 0, 0);
-				console.log(startDateTemp);
-				//availibility.startTimes.push(_getPossibleStartTimes(startDateTemp,8*3600000,duration));
+				momentDate = momentDate.add(1, 'days');
+				var tempTimestamp = new Date(momentDate).setHours(9,0,0,0);
+				availibility.startTimes =lodash.concat(availibility.startTimes,_getPossibleStartTimes(new Date(tempTimestamp),8*3600000,duration));
 				nextDays--;
 			}
+			var hoursTillMeeting = _getHoursTillMeeting(b);
+			var startOfFinalDay = new Date(b).setHours(9,0,0,0);
+			availibility.startTimes = lodash.concat(availibility.startTimes,_getPossibleStartTimes(new Date(startOfFinalDay),hoursTillMeeting,duration));
 			
-			//availibility.timeBetween = hoursTillDayEnds + nextDays * 8 + _getHoursTillMeeting(b);
 		}
 
-		//if (availibility.timeBetween < duration)availibility.suitable = false;
 	} else {
 		availibility.startTime = a;
 		availibility.endTime = 'N/A'
@@ -175,14 +171,12 @@ function _getPossibleStartTimes(startDate, timeBetween, duration) {
 
 	if(durationUnix<timeBetweenUnix){
 		while (endTimeUnix < startDateUnix + timeBetweenUnix) {
-			var startTime = startDateUnix + durationUnix * ctr;
+			var startTime = startDateUnix + (0.5*3600) * ctr;
 			endTimeUnix = startTime+durationUnix;
 			if(endTimeUnix < startDateUnix + timeBetweenUnix)startTimeArray.push(startTime);
 			ctr++;
 		}
 	}
-	console.log('startTimeArray',startTimeArray);
-	
 	return startTimeArray;
 	
 }
@@ -190,31 +184,32 @@ function _getPossibleStartTimes(startDate, timeBetween, duration) {
 //You have an array of availibilities, now determine the possibilities
 //An intersection gets checked every 30 mins.
 function _determineAvailibilityAll(availibilities, duration) {
-
-	var intersections = [];
-
-	for (var i = 0; i < availibilities[0].length; i++) {
-		//We need startintersections from the first person
-		var startIntersection = availibilities[0][i].startTime.getTime() / 1000;
-		//Loop over other people to find intersections
-		for (var j = 1; j < availibilities.length; j++) {
-			//loop over the current person
-			for (var x = 1; x < availibilities[j].length; x++) {
-
-				var intersection = lodash.intersectionWith(startIntersection, availibilities[j][x], function (a, b) {
-					console.log('here');
-					var startTime = b.startTime.getTime() / 1000;
-					var endTime = b.endTime.getTime() / 1000;
-					if (b.endTime !== 'N/A') endTime = maxDate;
-					console.log(startIntersection, startTime, endTime, duration * 3600);
-					return startTime < a && endTime > a + duration * 3600;
-				});
-
-				intersections.push(intersection);
-			}
-		}
-
-	}
+	
+	return _.intersection(availibilities);
+	//var intersections = [];
+    //
+	//for (var i = 0; i < availibilities[0].length; i++) {
+	//	//We need startintersections from the first person
+	//	//var startIntersection = availibilities[0][i].startTime.getTime() / 1000;
+	//	//Loop over other people to find intersections
+	//	for (var j = 1; j < availibilities.length; j++) {
+	//		//loop over the current person
+	//		for (var x = 1; x < availibilities[j].length; x++) {
+    //
+	//			var intersection = lodash.intersectionWith(startIntersection, availibilities[j][x], function (a, b) {
+	//				console.log('here');
+	//				var startTime = b.startTime.getTime() / 1000;
+	//				var endTime = b.endTime.getTime() / 1000;
+	//				if (b.endTime !== 'N/A') endTime = maxDate;
+	//				console.log(startIntersection, startTime, endTime, duration * 3600);
+	//				return startTime < a && endTime > a + duration * 3600;
+	//			});
+    //
+	//			intersections.push(intersection);
+	//		}
+	//	}
+    //
+	//}
 }
 
 
