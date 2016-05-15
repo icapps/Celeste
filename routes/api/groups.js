@@ -7,59 +7,65 @@ var _ = require('underscore');
 var lodash = require('lodash');
 
 var maxDate = 14633207258;
+var amountOfEventsToget = 10;
+var defaultMeetingsInterval = 0.5;
 
 exports.getAvailabilities = function (req, res) {
 
-	//var users = req.body.users;
+	var users = req.body.users;
 	var duration = req.body.duration;
 	var rangeStart = moment().format();
 	if (req.body.start)rangeStart = moment(req.body.start).format();
 	var rangeEnd = moment().add(14, 'days').format();
 	if (req.body.end) rangeEnd = moment(req.body.end).format();
 
-	var testUser = {
-		id: '57371f8cb57ac0d546e2c5d5',
-		name: 'andybats'
-	};
+	//var testUser = {
+	//	id: '57371f8cb57ac0d546e2c5d5',
+	//	name: 'andybats'
+	//};
+    //
+	//var testUser2 = {
+	//	id: '57371f8cb57ac0d546e2c609',
+	//	name: 'maarten.anckaert'
+	//};
+	//var users = [];
+	//users.push(testUser, testUser2);
+	//duration = 0.5;
+	
+	if(req.body.users && req.body.duration){
+		var availabilitiesArray = [];
 
-	var testUser2 = {
-		id: '57371f8cb57ac0d546e2c609',
-		name: 'maarten.anckaert'
-	};
-	var users = [];
-	users.push(testUser, testUser2);
-	duration = 0.5;
+		//Get the first 10 events/availabilities for each user
+		_.forEach(users, function (user) {
+			availabilitiesArray.push(new Promise(function (resolve, reject) {
+				_getAvailibilitiesFromUser(amountOfEventsToget, duration, user,rangeStart,rangeEnd).then(function (events) {
+					resolve(events);
+				})
+			}))
 
-	var availabilitiesArray = [];
+		});
 
-	//Get the first 10 events/availabilities for each user
-	_.forEach(users, function (user) {
-		availabilitiesArray.push(new Promise(function (resolve, reject) {
-			_getAvailibilitiesFromUser(10, duration, user).then(function (events) {
-				resolve(events);
-			})
-		}))
+		Promise.all(availabilitiesArray).then(function (availabilities) {
 
-	});
+			var intersections = lodash.intersection.apply(null,availabilities);
 
-	Promise.all(availabilitiesArray).then(function (availabilities) {
-		
-		var intersections = lodash.intersection.apply(null,availabilities);
+			apiResponse.sendResponse(req,res,null,'error in availabilities',intersections);
+			
+		});
+	} else {
+		apiResponse.sendResponse(req,res,true,'wrong parameters sent',null);
+	}
 
-		apiResponse.sendResponse(req,res,null,'error in availabilities',intersections);
-
-		_determineAvailibilityAll(availabilities);
-
-	});
+	
 
 
 };
 
 //get the Availibilities per user
-function _getAvailibilitiesFromUser(amount, duration, user) {
+function _getAvailibilitiesFromUser(amount, duration, user,rangeStart,rangeEnd) {
 	//Get the first 10 events for that 
 	return new Promise(function (resolve, reject) {
-		Event.model.find({attendees: user.id}).limit(amount).sort('startDate').exec(function (err, events) {
+		Event.model.find({attendees: user.id,startDate:{$gte:rangeStart,$lt:rangeEnd}}).limit(amount).sort('startDate').exec(function (err, events) {
 			resolve(_calculateAvailibilities(events, duration));
 		})
 	})
@@ -88,7 +94,6 @@ function _calculateGap(a, b, duration) {
 
 		if (_sameDay(a, b)) {
 			var timeBetween = b - a;
-			//availibility.timeBetween = timeBetween / 1000 / 60 / 60;
 			availibility.startTimes = _getPossibleStartTimes(a, timeBetween, duration);
 		} else {
 			var hoursTillDayEnds = _getHoursTillEndOfDay(a);
@@ -171,7 +176,7 @@ function _getPossibleStartTimes(startDate, timeBetween, duration) {
 
 	if(durationUnix<timeBetweenUnix){
 		while (endTimeUnix < startDateUnix + timeBetweenUnix) {
-			var startTime = startDateUnix + (0.5*3600) * ctr;
+			var startTime = startDateUnix + (defaultMeetingsInterval*3600) * ctr;
 			endTimeUnix = startTime+durationUnix;
 			if(endTimeUnix < startDateUnix + timeBetweenUnix)startTimeArray.push(startTime);
 			ctr++;
@@ -179,37 +184,6 @@ function _getPossibleStartTimes(startDate, timeBetween, duration) {
 	}
 	return startTimeArray;
 	
-}
-
-//You have an array of availibilities, now determine the possibilities
-//An intersection gets checked every 30 mins.
-function _determineAvailibilityAll(availibilities, duration) {
-	
-	return _.intersection(availibilities);
-	//var intersections = [];
-    //
-	//for (var i = 0; i < availibilities[0].length; i++) {
-	//	//We need startintersections from the first person
-	//	//var startIntersection = availibilities[0][i].startTime.getTime() / 1000;
-	//	//Loop over other people to find intersections
-	//	for (var j = 1; j < availibilities.length; j++) {
-	//		//loop over the current person
-	//		for (var x = 1; x < availibilities[j].length; x++) {
-    //
-	//			var intersection = lodash.intersectionWith(startIntersection, availibilities[j][x], function (a, b) {
-	//				console.log('here');
-	//				var startTime = b.startTime.getTime() / 1000;
-	//				var endTime = b.endTime.getTime() / 1000;
-	//				if (b.endTime !== 'N/A') endTime = maxDate;
-	//				console.log(startIntersection, startTime, endTime, duration * 3600);
-	//				return startTime < a && endTime > a + duration * 3600;
-	//			});
-    //
-	//			intersections.push(intersection);
-	//		}
-	//	}
-    //
-	//}
 }
 
 
