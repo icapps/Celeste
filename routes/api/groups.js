@@ -13,32 +13,30 @@ var defaultMeetingsInterval = 0.5;
 exports.getAvailabilities = function (req, res) {
 
 	var users = req.body.users;
-	var duration = req.body.duration/60;
+	var duration = req.body.duration / 60;
 	var rangeStart = moment().format();
 	if (req.body.start)rangeStart = moment(req.body.start).format();
 	var rangeEnd = moment().add(14, 'days').format();
 	if (req.body.end) rangeEnd = moment(req.body.end).format();
 
-	//var testUser = {
-	//	id: '57371f8cb57ac0d546e2c5d5',
-	//	name: 'andybats'
-	//};
-    //
-	//var testUser2 = {
-	//	id: '57371f8cb57ac0d546e2c609',
-	//	name: 'maarten.anckaert'
-	//};
-	//var users = [];
-	//users.push(testUser, testUser2);
-	//duration = 0.5;
-	
-	if(req.body.users && req.body.duration){
+
+	if (req.body.users && req.body.duration) {
+		_getAvailabilities(users, duration, rangeStart, rangeEnd).then(function (av) {
+			apiResponse.sendResponse(req, res, null, 'error in availabilities', av);
+		})
+	} else {
+		apiResponse.sendResponse(req, res, true, 'wrong parameters sent', null);
+	}
+
+};
+
+function _getAvailabilities(users, duration, rangeStart, rangeEnd) {
+	return new Promise(function (mainResolve, mainReject) {
 		var availabilitiesArray = [];
 
-		//Get the first 10 events/availabilities for each user
 		_.forEach(users, function (user) {
 			availabilitiesArray.push(new Promise(function (resolve, reject) {
-				_getAvailibilitiesFromUser(amountOfEventsToget, duration, user,rangeStart,rangeEnd).then(function (events) {
+				_getAvailibilitiesFromUser(amountOfEventsToget, duration, user, rangeStart, rangeEnd).then(function (events) {
 					resolve(events);
 				})
 			}))
@@ -46,26 +44,21 @@ exports.getAvailabilities = function (req, res) {
 		});
 
 		Promise.all(availabilitiesArray).then(function (availabilities) {
-
-			var intersections = lodash.intersection.apply(null,availabilities);
-
-			apiResponse.sendResponse(req,res,null,'error in availabilities',intersections);
-			
+			mainResolve(lodash.intersection.apply(null, availabilities));
 		});
-	} else {
-		apiResponse.sendResponse(req,res,true,'wrong parameters sent',null);
-	}
+	})
 
-	
+}
 
-
-};
 
 //get the Availibilities per user
-function _getAvailibilitiesFromUser(amount, duration, user,rangeStart,rangeEnd) {
+function _getAvailibilitiesFromUser(amount, duration, user, rangeStart, rangeEnd) {
 	//Get the first 10 events for that 
 	return new Promise(function (resolve, reject) {
-		Event.model.find({attendees: user.id,startDate:{$gte:rangeStart,$lt:rangeEnd}}).limit(amount).sort('startDate').exec(function (err, events) {
+		Event.model.find({
+			attendees: user.id,
+			startDate: {$gte: rangeStart, $lt: rangeEnd}
+		}).limit(amount).sort('startDate').exec(function (err, events) {
 			resolve(_calculateAvailibilities(events, duration));
 		})
 	})
@@ -78,7 +71,7 @@ function _calculateAvailibilities(events, duration) {
 	for (var i = 0; i < events.length; i++) {
 		var startDate = null;
 		if (i !== events.length - 1) startDate = events[i + 1].startDate;
-		availibilityArray= lodash.concat(availibilityArray,_calculateGap(events[i].endDate, startDate, duration).startTimes);
+		availibilityArray = lodash.concat(availibilityArray, _calculateGap(events[i].endDate, startDate, duration).startTimes);
 	}
 
 	return availibilityArray;
@@ -97,19 +90,19 @@ function _calculateGap(a, b, duration) {
 			availibility.startTimes = _getPossibleStartTimes(a, timeBetween, duration);
 		} else {
 			var hoursTillDayEnds = _getHoursTillEndOfDay(a);
-			availibility.startTimes = lodash.concat(availibility.startTimes,_getPossibleStartTimes(a,hoursTillDayEnds*3600000,duration));
+			availibility.startTimes = lodash.concat(availibility.startTimes, _getPossibleStartTimes(a, hoursTillDayEnds * 3600000, duration));
 			var nextDays = _daysFromNow(a, b);
 			var momentDate = moment(a);
-			while(nextDays>0){
+			while (nextDays > 0) {
 				momentDate = momentDate.add(1, 'days');
-				var tempTimestamp = new Date(momentDate).setHours(9,0,0,0);
-				availibility.startTimes =lodash.concat(availibility.startTimes,_getPossibleStartTimes(new Date(tempTimestamp),8*3600000,duration));
+				var tempTimestamp = new Date(momentDate).setHours(9, 0, 0, 0);
+				availibility.startTimes = lodash.concat(availibility.startTimes, _getPossibleStartTimes(new Date(tempTimestamp), 8 * 3600000, duration));
 				nextDays--;
 			}
 			var hoursTillMeeting = _getHoursTillMeeting(b);
-			var startOfFinalDay = new Date(b).setHours(9,0,0,0);
-			availibility.startTimes = lodash.concat(availibility.startTimes,_getPossibleStartTimes(new Date(startOfFinalDay),hoursTillMeeting,duration));
-			
+			var startOfFinalDay = new Date(b).setHours(9, 0, 0, 0);
+			availibility.startTimes = lodash.concat(availibility.startTimes, _getPossibleStartTimes(new Date(startOfFinalDay), hoursTillMeeting, duration));
+
 		}
 
 	} else {
@@ -174,16 +167,16 @@ function _getPossibleStartTimes(startDate, timeBetween, duration) {
 	var endTimeUnix = 0;
 	var ctr = 0;
 
-	if(durationUnix<timeBetweenUnix){
+	if (durationUnix < timeBetweenUnix) {
 		while (endTimeUnix < startDateUnix + timeBetweenUnix) {
-			var startTime = startDateUnix + (defaultMeetingsInterval*3600) * ctr;
-			endTimeUnix = startTime+durationUnix;
-			if(endTimeUnix < startDateUnix + timeBetweenUnix)startTimeArray.push(startTime);
+			var startTime = startDateUnix + (defaultMeetingsInterval * 3600) * ctr;
+			endTimeUnix = startTime + durationUnix;
+			if (endTimeUnix < startDateUnix + timeBetweenUnix)startTimeArray.push(startTime);
 			ctr++;
 		}
 	}
 	return startTimeArray;
-	
+
 }
 
 

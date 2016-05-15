@@ -22,11 +22,11 @@ exports = module.exports = function (app) {
 	app.get('/api/users',routes.api.users.getAll);
 	app.get('/api/rooms',routes.api.rooms.getAll);
 	app.get('/api/channels',routes.api.channels.getAll);
-	app.get('/api/groups',routes.api.groups.getAvailabilities);
-
+	
 	//api post
 	app.post('/api/events',routes.api.events.postEvent);
-	
+	app.post('/api/groups',routes.api.groups.getAvailabilities);
+
 	//sync
 	app.get('/api/sync', sync.syncUsersToDb);
 
