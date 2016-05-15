@@ -10,8 +10,8 @@ exports.getAll = function (req, res) {
 	//example:
 	//api/rooms?events=true&start=somedate&end=somedate
 	//Gets all rooms with the events during that timeperiod
-	var rangeStart = moment(Date.now().setHours(9,0,0,0)).format();
-	var rangeEnd = moment(Date.now().setHours(17,0,0,0)).format();
+	var rangeStart = moment(new Date().setHours(9,0,0,0)).format();
+	var rangeEnd = moment(new Date().setHours(17,0,0,0)).format();
 	
 	
 	if(req.query.start) rangeStart = moment(req.query.start).format();
