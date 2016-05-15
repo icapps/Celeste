@@ -6,7 +6,7 @@ module.exports.getUserComments = function (req, res) {
 		uri: 'https://slack.com/api/channels.history?',
 		qs: {
 			token: process.env.SLACK_TOKEN,
-			channel: 'C025GQ9B9',
+			channel: 'C0ZLK3R2P'
 		},
 		json: true
 	};
