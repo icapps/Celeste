@@ -17,6 +17,7 @@ exports.getAll = function (req, res) {
 
 	rp(options)
 		.then(function (result) {
+			
 			var channels = [];
 			var channelPromises = [];
 			_.forEach(result.channels, function (channel) {
@@ -34,9 +35,10 @@ exports.getAll = function (req, res) {
 										var userToSend = {
 											id: user.id,
 											real_name: user.real_name,
-											title: user.profile.title
+											title: user.profile.title,
+											image: user.profile.image
 										};
-
+										
 										memberArray.push(userToSend);
 									}
 								
@@ -48,8 +50,11 @@ exports.getAll = function (req, res) {
 					});
 
 					Promise.all(memberPromiseArray).then(function () {
-						channelObject.members = memberArray;
-						channels.push(channelObject);
+						
+						if(memberArray.length>0){
+							channelObject.members = memberArray;
+							channels.push(channelObject);
+						}
 						parentResolve();
 					})
 				}));

@@ -30,7 +30,7 @@ keystone.init({
 	'auth': true,
 	'user model': 'User',
 	'port': process.env.PORT,
-	'mongo': process.env.MONGODB_URI || 'mongodb://localhost/celeste'
+	'mongo': process.env.MONGODB_URI || 'mongodb://localhost:27017/celeste'
 });
 
 keystone.import('models');
