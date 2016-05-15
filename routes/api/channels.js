@@ -17,6 +17,7 @@ exports.getAll = function (req, res) {
 
 	rp(options)
 		.then(function (result) {
+			
 			var channels = [];
 			var channelPromises = [];
 			_.forEach(result.channels, function (channel) {
@@ -32,11 +33,14 @@ exports.getAll = function (req, res) {
 							User.model.findOne({slack_id: member}).exec(function (err, user) {
 									if(user) {
 										var userToSend = {
-											id: user.id,
+											_id: user.id,
 											real_name: user.real_name,
-											title: user.profile.title
+											profile:{
+												image: user.profile.image,
+												title: user.profile.title
+											}
 										};
-
+										
 										memberArray.push(userToSend);
 									}
 								
@@ -48,8 +52,11 @@ exports.getAll = function (req, res) {
 					});
 
 					Promise.all(memberPromiseArray).then(function () {
-						channelObject.members = memberArray;
-						channels.push(channelObject);
+						//We only need channels with more than one member
+						if(memberArray.length>1){
+							channelObject.members = memberArray;
+							channels.push(channelObject);
+						}
 						parentResolve();
 					})
 				}));
