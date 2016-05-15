@@ -56,7 +56,7 @@ function _getAvailibilitiesFromUser(amount, duration, user, rangeStart, rangeEnd
 	//Get the first 10 events for that 
 	return new Promise(function (resolve, reject) {
 		Event.model.find({
-			attendees: user.id,
+			attendees: user._id,
 			startDate: {$gte: rangeStart, $lt: rangeEnd}
 		}).limit(amount).sort('startDate').exec(function (err, events) {
 			resolve(_calculateAvailibilities(events, duration));
