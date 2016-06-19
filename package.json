@@ -8,7 +8,7 @@
     "dotenv": "^2.0.0",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.5",
-    "keystone": "^0.3.16",
+    "keystone": "^0.3.21",
     "lodash": "^4.12.0",
     "moment": "^2.13.0",
     "njwt": "^0.2.3",
