@@ -9,7 +9,7 @@
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.5",
     "keystone": "^0.3.16",
-    "lodash": "^4.12.0",
+    "lodash": "^4.16.4",
     "moment": "^2.13.0",
     "njwt": "^0.2.3",
     "node-sass": "^3.3.2",
