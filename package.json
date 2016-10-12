@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "async": "^1.5.0",
+    "async": "^2.1.0",
     "cloudinary": "^1.2.4",
     "dotenv": "^2.0.0",
     "express-handlebars": "^3.0.0",
